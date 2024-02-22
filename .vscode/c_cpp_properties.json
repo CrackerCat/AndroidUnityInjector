@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:/mingw/mingw64/bin/gcc.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "windows-gcc-x86"
+        },
+        {
+            "name": "android",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${NDK_HOME}/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include/**"
+            ],
+            "compilerPath": "${NDK_HOME}/toolchains/llvm/prebuilt/windows-x86_64/bin/aarch64-linux-android30-clang++",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-arm64"
+        }
+    ],
+    "version": 4
+}
