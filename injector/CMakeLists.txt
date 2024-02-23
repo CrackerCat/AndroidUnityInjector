@@ -8,4 +8,4 @@ add_library(${PROJECT_NAME} INTERFACE)
 
 add_subdirectory(AndKittyInjector)
 target_include_directories(${PROJECT_NAME} INTERFACE AndKittyInjectorPack)
-target_link_libraries(${PROJECT_NAME} INTERFACE AndKittyInjector)
+target_link_libraries(${PROJECT_NAME} INTERFACE AndKittyInjectorPack)

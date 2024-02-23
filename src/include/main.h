@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <stdio.h>
 
 #ifdef __linux__
 #include <dlfcn.h>
@@ -23,7 +24,7 @@
 
 #include <jni.h>
 
-inline static JavaVM *g_jvm;
-inline static JNIEnv *env;
+static JavaVM *g_jvm;
+static JNIEnv *env;
 
 void test();

@@ -1,13 +1,20 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(lua_5_4_6)
+project(lua_vm)
 
-file(GLOB_RECURSE LUA_SRC_FILES "src/*.c")
+file(GLOB LUA_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/lua-5.4.6/*.c)
 
-file(GLOB LUABRIDGE_TEST_LUA54_FILES
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    lua-5.4.4/src/*.c
-    lua-5.4.4/src/*.h
-    lua-5.4.4/src/*.hpp
-    LuaLibrary.h
-)
+add_library(${PROJECT_NAME}
+    STATIC
+    ${LUA_SRC_FILES})
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/lua-5.4.6)
+
+# 添加编译属性 保留调试符号
+target_compile_options(${PROJECT_NAME} PRIVATE -g)
+
+# or using LuaJIT
+# ......

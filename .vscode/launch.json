@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "attach",
+            "name": "AttachPID",
+            "program": "UnityInjector",
+            "pid": "17829",
+            "initCommands": [
+                "platform select remote-android",
+                // "platform connect unix-abstract-connect:///data/local/tmp/debug.sock",
+                "platform connect unix-abstract-connect://localhost:12345",
+            ],
+            "preRunCommands": [],
+            "postRunCommands": [
+                "process handle SIGPWR --stop false --pass true --notify false",
+                "process handle SIGXCPU --stop false --pass true --notify false"
+            ]
+        }
+    ]
+}
