@@ -47,5 +47,6 @@ endif()
 add_library(${LIB_NAME} SHARED ${SOURCES})
 target_link_libraries(${LIB_NAME} ${LIB_NAME_STATIC})
 
-add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/inject.cpp)
-target_link_libraries(${PROJECT_NAME} ${LIB_NAME_STATIC})
+file(GLOB_RECURSE TEST_SRC ${CMAKE_SOURCE_DIR}/src/*.cpp)
+add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/inject.cpp ${TEST_SRC})
+target_link_libraries(${PROJECT_NAME} ${LIB_NAME_STATIC} lua_vm)
