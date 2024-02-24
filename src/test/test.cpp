@@ -85,5 +85,4 @@ void test_3(lua_State *L) {
 }
 
 void test_4(lua_State *L) {
-    // libUnityInjector_lib.so
 }

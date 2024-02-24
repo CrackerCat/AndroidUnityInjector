@@ -13,13 +13,10 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/lua-5.4.6)
 
-# keep static void doREPL (lua_State *L)
-# keep static int pmain (lua_State *L)
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    COMPILE_FLAGS "-Wl,--retain-symbols-file=${CMAKE_CURRENT_SOURCE_DIR}/symbols.txt"
+    LINK_FLAGS "-Wl,--whole-archive"
 )
 
-# 添加编译属性 保留调试符号
 target_compile_options(${PROJECT_NAME} PRIVATE -g)
 
 # or using LuaJIT

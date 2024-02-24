@@ -80,7 +80,21 @@
         "locale": "cpp",
         "queue": "cpp",
         "stack": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "xlocinfo": "cpp",
+        "xstring": "cpp",
+        "__tree": "cpp",
+        "charconv": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "forward_list": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "span": "cpp",
+        "variant": "cpp",
+        "unordered_set": "cpp"
     },
     "commentTranslate.targetLanguage": "zh-CN",
+    "mesonbuild.configureOnOpen": false,
+    // "C_Cpp.errorSquiggles": "disabled",
 }

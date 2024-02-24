@@ -1,12 +1,21 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(UnityInjector)
+project(uinjector)
+
+add_definitions(-DEXEC_NAME="${PROJECT_NAME}")
+
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    add_definitions(-DDEBUG)
+endif()
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-file(GLOB_RECURSE SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE HEADERS ${CMAKE_SOURCE_DIR}/src/include/*.h)
+
+# binds
+file(GLOB_RECURSE BINDS ${CMAKE_SOURCE_DIR}/src/binds/*.cpp)
+list(APPEND SOURCES ${BINDS})
 
 message(STATUS "SOURCES: ${SOURCES}")
 
@@ -23,6 +32,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON}")
 set(LIB_NAME ${PROJECT_NAME}_lib)
 set(LIB_NAME_STATIC ${PROJECT_NAME}_static)
 
+# gen common static lib
 add_library(${LIB_NAME_STATIC} STATIC ${SOURCES})
 
 target_include_directories(${LIB_NAME_STATIC} PUBLIC ${CMAKE_SOURCE_DIR}/src/include)
@@ -36,7 +46,6 @@ target_link_libraries(${LIB_NAME_STATIC} plugins)
 add_subdirectory(injector)
 target_link_libraries(${LIB_NAME_STATIC} injector)
 
-# 如果当前不是安卓平台
 if(NOT ANDROID)
     find_library(log-lib log)
     target_link_libraries(${LIB_NAME_STATIC} ${log-lib})
@@ -44,9 +53,21 @@ else()
     target_link_libraries(${LIB_NAME_STATIC} log)
 endif()
 
+# gen shared lib for injector (inject by exec\AndKittyInjector)
 add_library(${LIB_NAME} SHARED ${SOURCES})
 target_link_libraries(${LIB_NAME} ${LIB_NAME_STATIC})
 
+# test ( also below exec_program )
+file(GLOB_RECURSE TESTS ${CMAKE_SOURCE_DIR}/src/test/*.cpp)
+list(APPEND SOURCES ${TESTS})
+
+# gen executable (injector built in)
 file(GLOB_RECURSE TEST_SRC ${CMAKE_SOURCE_DIR}/src/*.cpp)
-add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/inject.cpp ${TEST_SRC})
+add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/main.cpp ${TEST_SRC})
 target_link_libraries(${PROJECT_NAME} ${LIB_NAME_STATIC} lua_vm)
+
+# keep static void doREPL (lua_State *L)
+# keep static int pmain (lua_State *L)
+# set_target_properties(${PROJECT_NAME} PROPERTIES
+# LINK_FLAGS "-Wl,--retain-symbols-file=${CMAKE_CURRENT_SOURCE_DIR}/symbols.txt"
+# )

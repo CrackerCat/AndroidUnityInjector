@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LuaBridge_HEADER
+#define LuaBridge_HEADER
 
 extern "C" {
 #include "lauxlib.h"
@@ -7,3 +8,5 @@ extern "C" {
 }
 
 #include "LuaBridge/LuaBridge.h"
+
+#endif

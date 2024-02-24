@@ -1,30 +1,35 @@
-#include "UnityResolve.hpp"
+#if !defined(MAIN_CPP_H)
+#define MAIN_CPP_H
 
+#include "LuaLibrary.h"
+#include "UnityResolve.hpp"
+#include "binds.h"
+#include "debugbreak.h"
+#include "dobby.h"
 #include <algorithm>
+#include <android/log.h>
 #include <iostream>
 #include <stdio.h>
+#include <thread>
+#include <vector>
+#include <xdl.h>
 
 #ifdef __linux__
 #include <dlfcn.h>
 #define GetModuleHandle dlopen
 #endif
+#ifdef DEBUG
+#define DEBUG_PRINT(fmt, ...) fprintf(stderr, fmt, ##__VA_ARGS__)
+#else
+#define DEBUG_PRINT(fmt, ...)
+#endif
 
-#include <thread>
-#include <vector>
-
-#include <android/log.h>
-
-#include "debugbreak.h"
-
-#include <xdl.h>
+#ifndef EXEC_NAME
+#define EXEC_NAME "UnityInjector"
+#endif
 
 #define logd(...) __android_log_print(ANDROID_LOG_DEBUG, "ZZZ", __VA_ARGS__)
 
 #define MAIN __attribute__((constructor))
 
-#include <jni.h>
-
-static JavaVM *g_jvm;
-static JNIEnv *env;
-
-void test();
+#endif // MAIN_CPP_H

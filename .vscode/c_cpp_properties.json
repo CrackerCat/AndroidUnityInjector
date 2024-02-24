@@ -9,7 +9,8 @@
             "compilerPath": "${NDK_HOME}/toolchains/llvm/prebuilt/windows-x86_64/bin/aarch64-linux-android30-clang++",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "clang-arm64"
+            "intelliSenseMode": "clang-arm64",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4

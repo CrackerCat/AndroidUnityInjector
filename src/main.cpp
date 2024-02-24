@@ -1,34 +1,48 @@
-#include <main.h>
+#include "main.h"
+#include "test.h"
 
-jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
-    logd("------------------- JNI_OnLoad -------------------");
-    if (vm->GetEnv((void **)&env, JNI_VERSION_1_6) == JNI_OK) {
-        logd("[*] GetEnv OK");
+static int report(lua_State *L, int status) {
+    if (status != LUA_OK) {
+        const char *msg = lua_tostring(L, -1);
+        lua_writestringerror("%s\n", msg);
+        lua_pop(L, 1); /* remove message */
     }
-    if (vm->AttachCurrentThread(&env, nullptr) == JNI_OK) {
-        logd("[*] AttachCurrentThread OK");
-    }
-    g_jvm = vm;
-
-    test();
-    return JNI_VERSION_1_6;
+    return status;
 }
 
-void test() {
+static void repl(lua_State *L) {
+    std::string input;
+    while (true) {
+        printf("exec > ");
+        std::getline(std::cin, input);
+        if (input == "exit" || input == "q")
+            break;
+        int status = luaL_dostring(L, input.c_str());
+        if (status == 1)
+            report(L, status);
+    }
+}
 
-    void *handle = GetModuleHandle("libil2cpp.so", RTLD_LAZY);
-    logd("libil2cpp.so handle: %p", handle);
+int main() {
 
-    void *handle_xdl = xdl_open("libil2cpp.so", RTLD_LAZY);
+    lua_State *L = nullptr;
+    // raise(SIGSTOP);
 
-    UnityResolve::Init(handle_xdl, UnityResolve::Mode::Il2Cpp);
+    L = luaL_newstate();
 
-    std::vector<UnityResolve::Assembly *> as = UnityResolve::assembly;
-    std::for_each(as.begin(), as.end(), [&](auto item) {
-    std::cout << item->name << "\tAssembly address: " << item->address << std::endl;
-    logd("%p -> %s", item->address, item->name.c_str()); });
+    luaL_openlibs(L);
 
-    // config lua binds
+    bind_libs(L);
 
-    // start lua repl
+    // test_1(L);
+
+    // test_2(L);
+
+    // test_3(L);
+
+    repl(L);
+
+    lua_close(L);
+
+    return 0;
 }
