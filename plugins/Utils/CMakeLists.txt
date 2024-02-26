@@ -16,4 +16,11 @@ target_link_libraries(${PROJECT_NAME} INTERFACE xdl)
 target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/fmt/include)
 target_link_libraries(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/fmt/prebuilt/${ANDROID_ABI}/libfmt.a)
 
+# debugbreak
 target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/debugbreak)
+
+# rttr
+set(RTTR_DIR ${CMAKE_CURRENT_SOURCE_DIR}/RTTR)
+target_include_directories(${PROJECT_NAME} INTERFACE ${RTTR_DIR}/src)
+target_include_directories(${PROJECT_NAME} INTERFACE ${RTTR_DIR}/prebuilt/${ANDROID_ABI}/src) # verison
+target_link_libraries(${PROJECT_NAME} INTERFACE ${RTTR_DIR}/prebuilt/${ANDROID_ABI}/lib/librttr_core.a)

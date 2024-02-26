@@ -1,6 +1,22 @@
 #include "xdl.h"
 #include "bindings.h"
 
+#include "rttr/registration"
+#include <fmt/color.h>
+
+using namespace rttr;
+
+RTTR_REGISTRATION {
+    registration::class_<xdl_info_t>("xdl_info_t")
+        .property("dli_fname", &xdl_info_t::dli_fname)
+        .property("dli_fbase", &xdl_info_t::dli_fbase)
+        .property("dli_sname", &xdl_info_t::dli_sname)
+        .property("dli_saddr", &xdl_info_t::dli_saddr)
+        .property("dli_ssize", &xdl_info_t::dli_ssize)
+        .property("dlpi_phdr", &xdl_info_t::dlpi_phdr)
+        .property("dlpi_phnum", &xdl_info_t::dlpi_phnum);
+}
+
 class xdl_bind {
 public:
     void info() {
@@ -53,18 +69,23 @@ public:
 
 private:
     static void printXDLInfo(xdl_info_t *info) {
-        printf("xdl_info: %p\n", info);
-        printf("dli_fname: %s\n", info->dli_fname);
-        printf("dli_fbase: %p\n", info->dli_fbase);
-        printf("dli_sname: %s\n", info->dli_sname);
-        printf("dli_saddr: %p\n", info->dli_saddr);
-        printf("dli_ssize: %p\n", info->dli_ssize);
-        printf("dlpi_phdr: %p\n", info->dlpi_phdr);
-        printf("dlpi_phnum: %p\n", info->dlpi_phnum);
+        type t = type::get<xdl_info_t>();
+        for (auto &prop : t.get_properties()) {
+            auto name = prop.get_name();
+            rttr::variant value = prop.get_value(info);
+            if (value.get_type() == rttr::type::get<const char *>()) {
+                const char *cstr = value.get_value<const char *>();
+                std::cout << '\t' << name << ": " << (cstr ? cstr : "<null>") << std::endl;
+            } else if (value.get_type() == rttr::type::get<size_t>()) {
+                std::cout << '\t' << name << ": " << value.get_value<size_t>() << std::endl;
+            } else if (value.get_type() == rttr::type::get<void *>()) {
+                std::cout << '\t' << name << ": " << value.get_value<void *>() << std::endl;
+            } else {
+                std::cout << '\t' << name << ": " << value.get_value<void *>() << std::endl;
+            }
+        }
     }
 };
-
-#include <fmt/color.h>
 
 void reg_xdl(lua_State *L) {
     luabridge::getGlobalNamespace(L)

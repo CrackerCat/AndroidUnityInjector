@@ -1,10 +1,10 @@
 #if !defined(MAIN_CPP_H)
 #define MAIN_CPP_H
 
-#include "UnityResolve.hpp"
 #include "LuaLibrary.h"
-#include "debugbreak.h"
+#include "UnityResolve.hpp"
 #include "bindings.h"
+#include "debugbreak.h"
 #include "dobby.h"
 
 #include <algorithm>

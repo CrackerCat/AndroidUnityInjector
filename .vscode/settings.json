@@ -92,7 +92,12 @@
         "set": "cpp",
         "span": "cpp",
         "variant": "cpp",
-        "unordered_set": "cpp"
+        "unordered_set": "cpp",
+        "registration": "cpp",
+        "any": "cpp",
+        "complex": "cpp",
+        "typeindex": "cpp",
+        "__functional_base_03": "cpp"
     },
     "commentTranslate.targetLanguage": "zh-CN",
     "mesonbuild.configureOnOpen": false,
