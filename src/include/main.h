@@ -1,11 +1,12 @@
 #if !defined(MAIN_CPP_H)
 #define MAIN_CPP_H
 
-#include "LuaLibrary.h"
 #include "UnityResolve.hpp"
-#include "binds.h"
+#include "LuaLibrary.h"
 #include "debugbreak.h"
+#include "bindings.h"
 #include "dobby.h"
+
 #include <algorithm>
 #include <android/log.h>
 #include <iostream>

@@ -1,5 +1,5 @@
 #include "xdl.h"
-#include "binds.h"
+#include "bindings.h"
 
 class xdl_bind {
 public:
@@ -64,6 +64,8 @@ private:
     }
 };
 
+#include <fmt/color.h>
+
 void reg_xdl(lua_State *L) {
     luabridge::getGlobalNamespace(L)
         .beginClass<xdl_bind>("xdl_bind")
@@ -74,5 +76,5 @@ void reg_xdl(lua_State *L) {
         .endClass();
     static auto xdl = new xdl_bind();
     luabridge::setGlobal(L, xdl, "xdl");
-    DEBUG_PRINT("[*] luabridge bind xdl\n");
+    fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] luabridge bind {}\n", "xdl");
 }

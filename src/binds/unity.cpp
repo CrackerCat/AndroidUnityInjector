@@ -1,4 +1,4 @@
-#include "binds.h"
+#include "bindings.h"
 #include "xdl.h"
 
 class unity_bind {
@@ -10,6 +10,7 @@ public:
 
     void info() {
         // todo get unity packagename version etc.
+        printf("TODO");
     }
 
     void assemblies() {
@@ -30,11 +31,16 @@ public:
 void reg_unity(lua_State *L) {
     luabridge::getGlobalNamespace(L)
         .beginClass<unity_bind>("unity_bind")
-        .addConstructor<void (*)()>()
         .addFunction("info", &unity_bind::info)
         .addFunction("assemblies", &unity_bind::assemblies)
+        .addFunction("Get", &unity_bind::Get)
         .endClass();
-    static auto unity_ins = new unity_bind();
-    luabridge::setGlobal(L, unity_ins, "unity");
+    void *handle_xdl = xdl_open("libil2cpp.so", RTLD_LAZY);
+    if (handle_xdl == nullptr) {
+        DEBUG_PRINT("[*] luabridge bind unity failed\n");
+        return;
+    }
+    static auto unity = new unity_bind();
+    luabridge::setGlobal(L, unity, "unity");
     DEBUG_PRINT("[*] luabridge bind unity\n");
 }

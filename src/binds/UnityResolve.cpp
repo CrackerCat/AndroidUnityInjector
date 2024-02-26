@@ -1,4 +1,4 @@
-#include "binds.h"
+#include "bindings.h"
 
 void reg_UnityResolve(lua_State *L) {
     luabridge::getGlobalNamespace(L)

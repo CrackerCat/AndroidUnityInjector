@@ -1,5 +1,6 @@
 #include "dobby.h"
-#include "binds.h"
+#include "bindings.h"
+
 #include <map>
 #include <vector>
 
