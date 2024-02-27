@@ -14,12 +14,13 @@ JavaScript虚拟机有很多备选
 总体还是觉得v8比较舒服（除了编译麻烦点），配合dobby hook函数可以使用到lambda，命令行使用起来更简洁
 
 UnityHook 使用到
-1. [UnityResolve](https://github.com/issuimo/UnityResolve.hpp) // 只是简单测试过安卓平台,单文件实现很简洁很香
-2. [IL2CPP_Resolver](https://github.com/sneakyevil/IL2CPP_Resolver) // 还没测试
+1. [UnityResolve](https://github.com/issuimo/UnityResolve.hpp)  只是简单测试过安卓平台,单文件实现很简洁很香
+2. [IL2CPP_Resolver](https://github.com/sneakyevil/IL2CPP_Resolver)  还没测试
 
-inject的参考代码
-1. [AndroidPtraceInject](https://github.com/SsageParuders/AndroidPtraceInject) 注释非常清晰
-2. [TinyInjector](https://github.com/shunix/TinyInjector)
-实现也都是ptrace注入动态库，保存寄存器，然后远程调用，回复寄存器 （这里后续的实现的化就考虑注入自己）
+Inject的参考代码
+1. [AndKittyInjector](https://github.com/MJx0/AndKittyInjector) 最完备的实现
+2. [AndroidPtraceInject](https://github.com/SsageParuders/AndroidPtraceInject) 注释非常清晰
+3. [TinyInjector](https://github.com/shunix/TinyInjector)
+实现也都是ptrace注入动态库，保存寄存器，然后远程调用，恢复寄存器 （这里后续的实现的化就考虑注入自己）
 
 然后想要实现的api大致同 [Il2CppHookScripts](https://github.com/axhlzy/Il2CppHookScripts) 这里面的常用api
