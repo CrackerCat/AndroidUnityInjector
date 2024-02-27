@@ -73,8 +73,6 @@ int main(int argc, char *argv[]) {
             fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] Injection took {} MS.\n", inj_ms.count());
 
         kitInjector.detach();
-
-        JNI_OnLoad(nullptr, nullptr);
     }
 
     return 0;

@@ -25,7 +25,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-fdeclspec)
 endif()
 
-set(COMMON "-fPIC -w -o0 -g -Wl,-E")
+set(COMMON "-fPIC -w -o0 -g")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON} ")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON}")
 
@@ -64,10 +64,8 @@ message(STATUS "EXEC_SRC: ${EXEC_SRC}")
 add_executable(${PROJECT_NAME} ${EXEC_SRC} ${TEST_SRC})
 target_link_libraries(${PROJECT_NAME} ${LIB_NAME_STATIC})
 
-# -fvisibility=default
 target_compile_options(${PROJECT_NAME} PUBLIC -fvisibility=default)
-
-# -Wl,--export-dynamic
+target_link_options(${PROJECT_NAME} PUBLIC -Wl,-E)
 
 # keep static void doREPL (lua_State *L)
 # keep static int pmain (lua_State *L)
