@@ -25,7 +25,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-fdeclspec)
 endif()
 
-set(COMMON "-fPIC -w -o0 -g")
+set(COMMON "-fPIC -w -o0 -g -Wl,-E")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON} ")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON}")
 
@@ -67,8 +67,7 @@ target_link_libraries(${PROJECT_NAME} ${LIB_NAME_STATIC})
 # -fvisibility=default
 target_compile_options(${PROJECT_NAME} PUBLIC -fvisibility=default)
 
-set_property(GLOBAL PROPERTY JNI_OnLoad JNI_OnLoad)
-set_property(GLOBAL PROPERTY startLuaVM startLuaVM)
+# -Wl,--export-dynamic
 
 # keep static void doREPL (lua_State *L)
 # keep static int pmain (lua_State *L)
