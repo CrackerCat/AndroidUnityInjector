@@ -1,7 +1,9 @@
 终极缝合怪（刚写，还没法用，大致思路如下）
 
-目的：脱离frida，使用ptrace的方式注入一个lua虚拟机，并绑定unityhookimpl
+目的：脱离frida，使用ptrace的方式注入一个lua虚拟机，并绑定 Unity Hook Cpp Impl
 （后面考虑还是使用JavaScript虚拟机）
+
+Lua 绑定使用到 [LuaBridge](https://github.com/vinniefalco/LuaBridge) 
 
 JavaScript虚拟机有很多备选
 1. [V8](https://chromium.googlesource.com/v8/v8.git) 还得是google优选
