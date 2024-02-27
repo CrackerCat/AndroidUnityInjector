@@ -22,7 +22,14 @@ static string get_self_path() {
 static KittyInjector kitInjector;
 static std::chrono::duration<double, std::milli> inj_ms{};
 
+constexpr bool START_VM = true;
+
 int main(int argc, char *argv[]) {
+
+    if (START_VM) {
+        startLuaVM();
+        return 0;
+    }
 
     // raise(SIGSTOP);
 
