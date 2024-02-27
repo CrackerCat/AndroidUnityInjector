@@ -9,8 +9,9 @@ add_library(${PROJECT_NAME} INTERFACE)
 add_subdirectory(magic_enum)
 target_link_libraries(${PROJECT_NAME} INTERFACE magic_enum)
 
-add_subdirectory(xdl)
-target_link_libraries(${PROJECT_NAME} INTERFACE xdl)
+# 在 AndKittyInjector 中用到了一个于最新的版本不一致的xdl，所以还是保守使用依赖的xdl
+# add_subdirectory(xdl)
+# target_link_libraries(${PROJECT_NAME} INTERFACE xdl)
 
 # fmt
 target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/fmt/include)

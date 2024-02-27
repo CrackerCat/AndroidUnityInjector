@@ -3,6 +3,8 @@
 
 #include "main.h"
 
+void test(lua_State *L);
+
 void test_1(lua_State *L);
 void test_2(lua_State *L);
 void test_3(lua_State *L);

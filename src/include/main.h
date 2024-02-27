@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <android/log.h>
 #include <iostream>
+#include <jni.h>
 #include <stdio.h>
 #include <thread>
 #include <vector>
@@ -32,5 +33,18 @@
 #define logd(...) __android_log_print(ANDROID_LOG_DEBUG, "ZZZ", __VA_ARGS__)
 
 #define MAIN __attribute__((constructor))
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+JNIEXPORT jint JNICALL
+JNI_OnLoad(JavaVM *vm, void *reserved);
+
+__attribute__((visibility("default"))) void startLuaVM();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // MAIN_CPP_H

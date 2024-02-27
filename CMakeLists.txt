@@ -37,11 +37,11 @@ add_library(${LIB_NAME_STATIC} STATIC ${SOURCES})
 
 target_include_directories(${LIB_NAME_STATIC} PUBLIC ${CMAKE_SOURCE_DIR}/src/include)
 
-add_subdirectory(lua)
-target_link_libraries(${LIB_NAME_STATIC} lua_vm)
-
 add_subdirectory(plugins)
 target_link_libraries(${LIB_NAME_STATIC} plugins)
+
+add_subdirectory(lua)
+target_link_libraries(${LIB_NAME_STATIC} lua_vm)
 
 add_subdirectory(injector)
 target_link_libraries(${LIB_NAME_STATIC} injector)
@@ -53,18 +53,22 @@ else()
     target_link_libraries(${LIB_NAME_STATIC} log)
 endif()
 
-# gen shared lib for injector (inject by exec\AndKittyInjector)
-add_library(${LIB_NAME} SHARED ${SOURCES})
-target_link_libraries(${LIB_NAME} ${LIB_NAME_STATIC})
-
 # test ( also below exec_program )
 file(GLOB_RECURSE TESTS ${CMAKE_SOURCE_DIR}/src/test/*.cpp)
 list(APPEND SOURCES ${TESTS})
 
+file(GLOB EXEC_SRC ${CMAKE_SOURCE_DIR}/src/*.cpp)
+message(STATUS "EXEC_SRC: ${EXEC_SRC}")
+
 # gen executable (injector built in)
-file(GLOB_RECURSE TEST_SRC ${CMAKE_SOURCE_DIR}/src/*.cpp)
-add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/main.cpp ${TEST_SRC})
-target_link_libraries(${PROJECT_NAME} ${LIB_NAME_STATIC} lua_vm)
+add_executable(${PROJECT_NAME} ${EXEC_SRC} ${TEST_SRC})
+target_link_libraries(${PROJECT_NAME} ${LIB_NAME_STATIC})
+
+# -fvisibility=default
+target_compile_options(${PROJECT_NAME} PUBLIC -fvisibility=default)
+
+set_property(GLOBAL PROPERTY JNI_OnLoad JNI_OnLoad)
+set_property(GLOBAL PROPERTY startLuaVM startLuaVM)
 
 # keep static void doREPL (lua_State *L)
 # keep static int pmain (lua_State *L)

@@ -1,5 +1,12 @@
 #include "test.h"
 
+void test(lua_State *L) {
+    test_1(L);
+    test_2(L);
+    test_3(L);
+    test_4(L);
+}
+
 void test_1(lua_State *L) {
 
     lua_getglobal(L, "print");
