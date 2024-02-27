@@ -24,6 +24,10 @@
 3. [TinyInjector](https://github.com/shunix/TinyInjector)
 实现也都是ptrace注入动态库，保存寄存器，然后远程调用，恢复寄存器 （这里后续的实现的化就考虑注入自己）
 
+##### 与Lua虚拟机交互
+1. 使用socket通信，安卓本地端创建一个soket服务器，远端windows或者linux使用python或者在编译一个命令行程序用来与安卓通信
+2. 考虑重定向tty？
+
 ---
 
 然后想要实现的api大致同 [Il2CppHookScripts](https://github.com/axhlzy/Il2CppHookScripts) 这里面的常用api
