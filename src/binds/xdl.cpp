@@ -3,6 +3,7 @@
 
 #include "rttr/registration"
 #include <fmt/color.h>
+#include <sstream>
 
 using namespace rttr;
 
@@ -19,16 +20,19 @@ RTTR_REGISTRATION {
 
 class xdl_bind {
 public:
-    void info() {
+    const char *infoTostring() {
         auto handle = xdl_open(EXEC_NAME, RTLD_LAZY);
         if (handle == nullptr) {
             printf("xdl_open failed\n");
-            return;
         }
         xdl_info_t info;
         xdl_info(handle, XDL_DI_DLINFO, &info);
-        printXDLInfo(&info);
         xdl_close(handle);
+        return XdlInfoToString(&info);
+    }
+
+    void info() {
+        printf("%s", infoTostring());
     }
 
     void addressInfo(size_t p) {
@@ -68,22 +72,24 @@ public:
     }
 
 private:
-    static void printXDLInfo(xdl_info_t *info) {
+    static const char *XdlInfoToString(xdl_info_t *info) {
         type t = type::get<xdl_info_t>();
+        std::stringstream os;
         for (auto &prop : t.get_properties()) {
             auto name = prop.get_name();
             rttr::variant value = prop.get_value(info);
             if (value.get_type() == rttr::type::get<const char *>()) {
                 const char *cstr = value.get_value<const char *>();
-                std::cout << '\t' << name << ": " << (cstr ? cstr : "<null>") << std::endl;
+                os << '\t' << name << ": " << (cstr ? cstr : "<null>") << std::endl;
             } else if (value.get_type() == rttr::type::get<size_t>()) {
-                std::cout << '\t' << name << ": " << value.get_value<size_t>() << std::endl;
+                os << '\t' << name << ": " << value.get_value<size_t>() << std::endl;
             } else if (value.get_type() == rttr::type::get<void *>()) {
-                std::cout << '\t' << name << ": " << value.get_value<void *>() << std::endl;
+                os << '\t' << name << ": " << value.get_value<void *>() << std::endl;
             } else {
-                std::cout << '\t' << name << ": " << value.get_value<void *>() << std::endl;
+                os << '\t' << name << ": " << value.get_value<void *>() << std::endl;
             }
         }
+        return os.str().c_str();
     }
 };
 
@@ -91,6 +97,7 @@ void reg_xdl(lua_State *L) {
     luabridge::getGlobalNamespace(L)
         .beginClass<xdl_bind>("xdl_bind")
         .addFunction("info", &xdl_bind::info)
+        .addFunction("infoTostring", &xdl_bind::infoTostring)
         .addFunction("findSymbyName", &xdl_bind::findSymbyName)
         .addFunction("iterate_phdr", &xdl_bind::iterate_phdr)
         .addFunction("addressInfo", &xdl_bind::addressInfo)

@@ -53,15 +53,20 @@ else()
     target_link_libraries(${LIB_NAME_STATIC} log)
 endif()
 
-# test ( also below exec_program )
-file(GLOB_RECURSE TESTS ${CMAKE_SOURCE_DIR}/src/test/*.cpp)
-list(APPEND SOURCES ${TESTS})
-
 file(GLOB EXEC_SRC ${CMAKE_SOURCE_DIR}/src/*.cpp)
 message(STATUS "EXEC_SRC: ${EXEC_SRC}")
 
+# test ( also below exec_program )
+file(GLOB_RECURSE TEST_SRC ${CMAKE_SOURCE_DIR}/src/test/*.cpp)
+
+# if debug add it
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    message(STATUS "TEST_SRC: ${TEST_SRC}")
+    list(APPEND EXEC_SRC ${TEST_SRC})
+endif()
+
 # gen executable (injector built in)
-add_executable(${PROJECT_NAME} ${EXEC_SRC} ${TEST_SRC})
+add_executable(${PROJECT_NAME} ${EXEC_SRC})
 target_link_libraries(${PROJECT_NAME} ${LIB_NAME_STATIC})
 
 target_compile_options(${PROJECT_NAME} PUBLIC -fvisibility=default)

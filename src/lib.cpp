@@ -1,3 +1,4 @@
+#include "test.h"
 #include <iostream>
 #include <jni.h>
 #include <main.h>
@@ -104,7 +105,7 @@ JNI_OnLoad(JavaVM *vm, void *reserved) {
         return JNI_VERSION_1_6;
     logd("------------------- JNI_OnLoad -------------------");
     if (vm->GetEnv((void **)&env, JNI_VERSION_1_6) == JNI_OK) {
-        logd("[*] GetEnv OK");
+        logd("[*] GetEnv OK | env:%p | vm:%p", env, vm);
     }
     if (vm->AttachCurrentThread(&env, nullptr) == JNI_OK) {
         logd("[*] AttachCurrentThread OK");
@@ -120,13 +121,18 @@ JNI_OnLoad(JavaVM *vm, void *reserved) {
 }
 
 void startLuaVM() {
+
+    logd("[*] Lua VM started"); // android_logcat
+
     lua_State *L = luaL_newstate();
 
     luaL_openlibs(L);
 
     bind_libs(L);
 
-    // test(L);
+    test(L);
+
+    // 将标准输出重定向到当前线程的socket
 
     repl(L);
 
