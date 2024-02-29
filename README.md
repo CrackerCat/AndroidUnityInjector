@@ -32,17 +32,23 @@
 使用的话还是很常规的操作
 
 `
-
 push uinjector to /data/local/tmp
+`
 
+`
 adbe start com.xxx.xxx -> start app
+`
 
+`
 adb shell pidof com.xxx.xxx -> get pid
+`
 
+`
 setenforce 0
+`
 
+`
 ./data/local/tmp/uinjector ${pid}
-
 `
 
 然后就是远端操作了，
@@ -52,8 +58,11 @@ setenforce 0
     nc 127.0.0.1 8024
 `
 
-然后界面没有提示，但是是一个阻塞的socket，可以当作lua shell使用
+然后界面没有提示，但是是一个阻塞的socket，可以当作lua shell使用, 参考下图可见已经成功注入了该应用
 
+![xdl:info()](https://github.com/axhlzy/AndroidUnityInjector/blob/main/images/inject_nc_test.png)
+
+这里参考代码中xdl的绑定
 
 ---
 
