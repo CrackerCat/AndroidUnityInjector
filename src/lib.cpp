@@ -192,7 +192,7 @@ void startLuaVM() {
 
     bind_libs(L);
 
-    test(L);
+    // test(L);
 
     // 将标准输出重定向到当前线程的socket
 
