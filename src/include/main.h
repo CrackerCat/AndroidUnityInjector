@@ -31,6 +31,11 @@
 #endif
 
 #define logd(...) __android_log_print(ANDROID_LOG_DEBUG, "ZZZ", __VA_ARGS__)
+#define loge(...) __android_log_print(ANDROID_LOG_ERROR, "ZZZ", __VA_ARGS__)
+
+#if !defined(lua_printf)
+#define lua_printf(s, l) fwrite((s), sizeof(char), (l), stdout)
+#endif
 
 #define MAIN __attribute__((constructor))
 

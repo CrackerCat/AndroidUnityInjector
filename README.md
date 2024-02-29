@@ -25,8 +25,35 @@
 实现也都是ptrace注入动态库，保存寄存器，然后远程调用，恢复寄存器 （这里后续的实现的化就考虑注入自己）
 
 ##### 与Lua虚拟机交互
-1. 安卓本地端创建一个socket服务器，远端windows/linux使用python或者再编译一个命令行程序用来与安卓通信
-2. 考虑重定向tty？
+- 安卓本地端创建一个socket服务器，远端windows/linux使用python或者再编译一个命令行程序用来与安卓通信
+
+---
+
+使用的话还是很常规的操作
+
+`
+
+push uinjector to /data/local/tmp
+
+adbe start com.xxx.xxx -> start app
+
+adb shell pidof com.xxx.xxx -> get pid
+
+setenforce 0
+
+./data/local/tmp/uinjector ${pid}
+
+`
+
+然后就是远端操作了，
+这里由于还有没客户端代码，所以展示socket的链接测试就用nc, 端口用的是8024
+
+`
+    nc 127.0.0.1 8024
+`
+
+然后界面没有提示，但是是一个阻塞的socket，可以当作lua shell使用
+
 
 ---
 

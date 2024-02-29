@@ -22,7 +22,7 @@ static string get_self_path() {
 static KittyInjector kitInjector;
 static std::chrono::duration<double, std::milli> inj_ms{};
 
-constexpr bool ONLY_START_VM = true;
+constexpr bool ONLY_START_VM = false;
 
 int main(int argc, char *argv[]) {
 
@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
         }
     } catch (const std::exception &e) {
         std::string appPkg = argv[1];
+        // not working
         pid = KittyMemoryEx::getProcessID(appPkg);
     }
 

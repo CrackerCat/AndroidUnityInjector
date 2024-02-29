@@ -1,4 +1,5 @@
 #include "test.h"
+#include <arpa/inet.h>
 #include <iostream>
 #include <jni.h>
 #include <main.h>
@@ -7,28 +8,65 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include "magic_enum_all.hpp"
+
 static JavaVM *g_jvm;
 static JNIEnv *env;
 static std::thread *g_thread = NULL;
 
-static int report(lua_State *L, int status) {
-    if (status != LUA_OK) {
-        const char *msg = lua_tostring(L, -1);
-        lua_writestringerror("%s\n", msg);
+// #define LUA_OK		0
+// #define LUA_YIELD 1
+// #define LUA_ERRRUN 2
+// #define LUA_ERRSYNTAX 3
+// #define LUA_ERRMEM 4
+// #define LUA_ERRERR 5
+enum LUA_STATUS {
+    LUA_OK_ = 0,
+    LUA_YIELD_ = 1,
+    LUA_ERRRUN_ = 2,
+    LUA_ERRSYNTAX_ = 3,
+    LUA_ERRMEM_ = 4,
+    LUA_ERRERR_ = 5
+};
+
+static int serverSocket, clientSocket;
+
+int l_print(lua_State *L) {
+    int n = lua_gettop(L);
+    lua_getglobal(L, "tostring");
+    for (int i = 1; i <= n; i++) {
+        const char *s;
+        size_t len;
+        lua_pushvalue(L, -1);
+        lua_pushvalue(L, i);
+        lua_call(L, 1, 1);
+        s = lua_tolstring(L, -1, &len);
+        if (s == nullptr) {
+            return luaL_error(L, "'tostring' must return a string to 'print'");
+        }
+        if (i > 1) {
+            write(clientSocket, "\t", 1);
+        }
+        write(clientSocket, s, len);
         lua_pop(L, 1);
     }
-    return status;
+    write(clientSocket, "\n", 1);
+    return 0;
 }
 
 void repl_socket(lua_State *L) {
 
-    int serverSocket, clientSocket;
-    struct sockaddr_in address;
     int opt = 1;
-    int addrlen = sizeof(address);
+    struct sockaddr_in address;
+    socklen_t addrlen = sizeof(address);
+
+    address = {
+        .sin_family = AF_INET,
+        .sin_addr.s_addr = INADDR_ANY,
+        .sin_port = htons(8024)};
 
     if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
-        perror("socket failed");
+        perror("create socket fail");
         exit(EXIT_FAILURE);
     }
 
@@ -37,31 +75,42 @@ void repl_socket(lua_State *L) {
         exit(EXIT_FAILURE);
     }
 
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(8024);
-
-    if (bind(serverSocket, (struct sockaddr *)&address, sizeof(address)) < 0) {
-        perror("bind failed");
+    if (bind(serverSocket, reinterpret_cast<struct sockaddr *>(&address), sizeof(address)) < 0) {
+        perror("serverSocket bind fail");
         exit(EXIT_FAILURE);
     }
 
     if (listen(serverSocket, 3) < 0) {
-        perror("listen");
+        perror("serverSocket listen fail");
         exit(EXIT_FAILURE);
     }
 
-    if ((clientSocket = accept(serverSocket, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0) {
-        perror("accept");
+    if ((clientSocket = accept(serverSocket, reinterpret_cast<struct sockaddr *>(&address), &addrlen)) < 0) {
+        perror("clientSocket accept fail");
         exit(EXIT_FAILURE);
+    } else {
+        std::cout << "Client connected." << std::endl;
+
+        struct sockaddr_in clientAddr;
+        socklen_t clientAddrLen = sizeof(clientAddr);
+        if (getpeername(clientSocket, reinterpret_cast<struct sockaddr *>(&clientAddr), &clientAddrLen) < 0) {
+            perror("getpeername");
+        } else {
+            std::cout << "Client IP: " << inet_ntoa(clientAddr.sin_addr) << std::endl;
+            std::cout << "Client sin_family: " << clientAddr.sin_family << std::endl;
+            std::cout << "Client port: " << ntohs(clientAddr.sin_port) << std::endl;
+        }
     }
+
+    lua_pushcfunction(L, l_print);
+    lua_setglobal(L, "print");
 
     char buffer[1024] = {0};
     int valread;
     std::string input;
+    dup2(clientSocket, STDOUT_FILENO);
     while (true) {
         memset(buffer, 0, sizeof(buffer));
-        printf("exec > ");
         fflush(stdout);
         valread = read(clientSocket, buffer, sizeof(buffer));
         if (valread == 0) {
@@ -73,17 +122,25 @@ void repl_socket(lua_State *L) {
         } else {
             input = buffer;
             if (input == "exit" || input == "q") {
-                std::cout << "Client requested exit." << std::endl;
+                write(clientSocket, "Client requested exit. \n", 24);
+                close(clientSocket);
+                close(serverSocket);
                 break;
             }
             int status = luaL_dostring(L, input.c_str());
-            if (status == 1)
-                report(L, status);
+            if (status != LUA_OK) {
+                auto msg = lua_tostring(L, -1);
+                lua_writestringerror("%s\n", msg);
+                write(clientSocket, msg, strlen(msg));
+                lua_pop(L, 1);
+            } else {
+                auto status_enum = reinterpret_cast<LUA_STATUS &>(status);
+                auto status_name = magic_enum::enum_name<LUA_STATUS>(status_enum);
+                std::string status = std::string(status_name.substr(0, status_name.size() - 1)) + "\n";
+                write(clientSocket, status.c_str(), status_name.size());
+            }
         }
     }
-
-    // close(clientSocket);
-    // close(serverSocket);
 }
 
 static void repl(lua_State *L) {
@@ -94,8 +151,13 @@ static void repl(lua_State *L) {
         if (input == "exit" || input == "q")
             break;
         int status = luaL_dostring(L, input.c_str());
-        if (status == 1)
-            report(L, status);
+        auto status_enum = reinterpret_cast<LUA_STATUS &>(status);
+        auto status_name = magic_enum::enum_name<LUA_STATUS>(status_enum);
+        if (status != LUA_OK) {
+            const char *msg = lua_tostring(L, -1);
+            lua_writestringerror("%s\n", msg);
+            lua_pop(L, 1);
+        }
     }
 }
 
@@ -130,13 +192,13 @@ void startLuaVM() {
 
     bind_libs(L);
 
-    test(L);
+    // test(L);
 
     // 将标准输出重定向到当前线程的socket
 
-    repl(L);
+    // repl(L);
 
-    // repl_socket(L);
+    repl_socket(L);
 
     // lua_close(L);
 }
