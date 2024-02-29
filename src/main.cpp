@@ -22,7 +22,7 @@ static string get_self_path() {
 static KittyInjector kitInjector;
 static std::chrono::duration<double, std::milli> inj_ms{};
 
-constexpr bool ONLY_START_VM = false;
+constexpr bool ONLY_START_VM = true;
 
 int main(int argc, char *argv[]) {
 

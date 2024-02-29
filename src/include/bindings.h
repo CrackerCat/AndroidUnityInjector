@@ -5,6 +5,8 @@
 
 void bind_libs(lua_State *L);
 
+void reg_base(lua_State *L);
+
 void reg_global(lua_State *L);
 
 class xdl_bind;

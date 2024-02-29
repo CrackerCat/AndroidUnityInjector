@@ -12,4 +12,6 @@ void reg_global(lua_State *L) {
 
     luabridge::getGlobalNamespace(L).addFunction(
         "threadid", *[]() { std::cout << std::this_thread::get_id(); });
+
+    DEBUG_PRINT("[*] luabridge bind global\n");
 }

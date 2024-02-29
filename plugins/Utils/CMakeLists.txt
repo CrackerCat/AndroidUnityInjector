@@ -25,3 +25,18 @@ set(RTTR_DIR ${CMAKE_CURRENT_SOURCE_DIR}/RTTR)
 target_include_directories(${PROJECT_NAME} INTERFACE ${RTTR_DIR}/src)
 target_include_directories(${PROJECT_NAME} INTERFACE ${RTTR_DIR}/prebuilt/${ANDROID_ABI}/src) # verison
 target_link_libraries(${PROJECT_NAME} INTERFACE ${RTTR_DIR}/prebuilt/${ANDROID_ABI}/lib/librttr_core.a)
+
+# LIEF
+set(LIEF_DIR ${CMAKE_CURRENT_SOURCE_DIR}/LIEF)
+add_subdirectory(${LIEF_DIR})
+target_link_libraries(${PROJECT_NAME} INTERFACE packLIEF)
+
+# keystone
+set(KEYSTONE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/keystone)
+add_subdirectory(${KEYSTONE_DIR})
+target_link_libraries(${PROJECT_NAME} INTERFACE keystone)
+
+# capstone
+set(CAPSTONE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/capstone)
+add_subdirectory(${CAPSTONE_DIR})
+target_link_libraries(${PROJECT_NAME} INTERFACE capstone)

@@ -16,11 +16,14 @@
 #include <vector>
 #include <xdl.h>
 
+#include "capstone/capstone.h"
+#include "keystone/keystone.h"
+
 #ifdef __linux__
 #include <dlfcn.h>
 #define GetModuleHandle dlopen
 #endif
-#ifdef DEBUG
+#ifdef DEBUG_PROJECT
 #define DEBUG_PRINT(fmt, ...) fprintf(stderr, fmt, ##__VA_ARGS__)
 #else
 #define DEBUG_PRINT(fmt, ...)

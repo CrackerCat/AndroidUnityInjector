@@ -2,6 +2,7 @@
 
 void bind_libs(lua_State *L) {
 
+    reg_base(L);
     reg_global(L);
     reg_xdl(L);
     reg_dobby(L);

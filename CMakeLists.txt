@@ -5,7 +5,7 @@ project(uinjector)
 add_definitions(-DEXEC_NAME="${PROJECT_NAME}")
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
-    add_definitions(-DDEBUG)
+    add_definitions(-DDEBUG_PROJECT)
 endif()
 
 set(CMAKE_C_STANDARD 17)
@@ -60,10 +60,10 @@ message(STATUS "EXEC_SRC: ${EXEC_SRC}")
 file(GLOB_RECURSE TEST_SRC ${CMAKE_SOURCE_DIR}/src/test/*.cpp)
 
 # if debug add it
-if(CMAKE_BUILD_TYPE MATCHES Debug)
+# if(CMAKE_BUILD_TYPE MATCHES Debug)
     message(STATUS "TEST_SRC: ${TEST_SRC}")
     list(APPEND EXEC_SRC ${TEST_SRC})
-endif()
+# endif()
 
 # gen executable (injector built in)
 add_executable(${PROJECT_NAME} ${EXEC_SRC})
