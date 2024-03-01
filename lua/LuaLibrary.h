@@ -7,6 +7,6 @@ extern "C" {
 #include "lualib.h"
 }
 
-#include "LuaBridge/LuaBridge.h"
+#include "LuaBridge3/LuaBridge.h"
 
 #endif

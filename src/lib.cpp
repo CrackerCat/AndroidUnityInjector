@@ -182,9 +182,29 @@ JNI_OnLoad(JavaVM *vm, void *reserved) {
     return JNI_VERSION_1_6;
 }
 
+#include <setjmp.h>
+
+static jmp_buf recover;
+
+void segfault_handler(int signum) {
+    loge("[-] Caught signal %d\n", signum);
+    fmt::print(fg(fmt::color::sky_blue) | fmt::emphasis::bold, "Caught signal {}\n", signum);
+    signal(SIGSEGV, segfault_handler);
+    longjmp(recover, 1);
+}
+
 void startLuaVM() {
 
-    logd("[*] Lua VM started"); // android_logcat
+    signal(SIGSEGV, segfault_handler);
+    setjmp(recover);
+
+    if (setjmp(recover) == 0) {
+        logd("[*] Lua VM started\n"); // android_logcat
+        fmt::print(fg(fmt::color::red) | fmt::emphasis::bold, "[*] Lua VM started\n");
+    } else {
+        loge("[-] Lua VM crashed and restart now\n");
+        fmt::print(fg(fmt::color::sky_blue) | fmt::emphasis::bold, "[*] Lua VM crashed and restart now\n");
+    }
 
     lua_State *L = luaL_newstate();
 
@@ -194,11 +214,9 @@ void startLuaVM() {
 
     // test(L);
 
-    // 将标准输出重定向到当前线程的socket
+    // repl(L);
 
-    repl(L);
-
-    // repl_socket(L);
+    repl_socket(L);
 
     // lua_close(L);
 }

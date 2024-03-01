@@ -68,5 +68,6 @@ void reg_dobby(lua_State *L) {
         .endClass();
     static auto dobby = new dobby_bind();
     luabridge::setGlobal(L, dobby, "dobby");
-    DEBUG_PRINT("[*] luabridge bind dobby\n");
+
+    fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] luabridge bind {}\n", "dobby");
 }

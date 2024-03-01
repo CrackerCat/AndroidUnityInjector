@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <android/log.h>
+#include <fmt/color.h>
 #include <iostream>
 #include <jni.h>
 #include <stdio.h>
@@ -27,6 +28,10 @@
 #define DEBUG_PRINT(fmt, ...) fprintf(stderr, fmt, ##__VA_ARGS__)
 #else
 #define DEBUG_PRINT(fmt, ...)
+#endif
+
+#ifndef PTR
+#define PTR uintptr_t
 #endif
 
 #ifndef EXEC_NAME

@@ -6,7 +6,7 @@ using namespace LIEF;
 
 void reg_base(lua_State *L) {
 
-    // printf("LIEF::ELF::VERSION: %d\n", magic_enum::enum_integer(ELF::VERSION::EV_CURRENT));
+    // luabridge::getGlobalNamespace(L);
 
-    DEBUG_PRINT("[*] luabridge bind base\n");
+    fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] luabridge bind base\n");
 }

@@ -2,7 +2,6 @@
 #include "bindings.h"
 
 #include "rttr/registration"
-#include <fmt/color.h>
 #include <sstream>
 
 using namespace rttr;
@@ -19,8 +18,12 @@ RTTR_REGISTRATION {
 }
 
 class xdl_bind {
+
 public:
-    const char *infoTostring() {
+    xdl_bind() {}
+
+    const char *
+    infoTostring() {
         auto handle = xdl_open(EXEC_NAME, RTLD_LAZY);
         if (handle == nullptr) {
             printf("xdl_open failed\n");
@@ -35,7 +38,7 @@ public:
         printf("%s", infoTostring());
     }
 
-    void addressInfo(size_t p) {
+    void addressInfo(PTR p) {
         xdl_info_t info;
         auto handle = xdl_open(EXEC_NAME, RTLD_LAZY);
         if (handle == nullptr) {
@@ -71,8 +74,48 @@ public:
         xdl_close(handle);
     }
 
+    // void *xdl_open(const char *filename, int flags)
+    void _xdl_open(const char *filename, int flags) {
+        auto handle = xdl_open(filename, flags);
+        std::cout << "xdl_open -> " << handle << std::endl;
+    }
+
+    void _xdl_open(const char *filename) {
+        _xdl_open(filename, RTLD_LAZY);
+    }
+
+    // void xdl_close(void *handle);
+    void _xdl_close(PTR handle) {
+        auto ret = xdl_close(reinterpret_cast<void *>(handle));
+        std::cout << "xdl_close -> " << ret << std::endl;
+    }
+
+    // void *xdl_sym(void *handle, const char *symbol, ElfW(Sym) *out_sym)
+    void _xdl_sym(PTR handle, const char *symbol, ElfW(Sym) *out_sym = nullptr) {
+        assert(handle != 0);
+        auto sym = xdl_sym(reinterpret_cast<void *>(handle), symbol, out_sym);
+        std::cout << "xdl_sym -> " << sym << std::endl;
+    }
+
+    void _xdl_sym(PTR handle, const char *symbol) {
+        assert(handle != 0);
+        _xdl_sym(handle, symbol, nullptr);
+    }
+
+    // void *xdl_dsym(void *handle, const char *symbol, ElfW(Sym) *out_sym)
+    void _xdl_dsym(PTR handle, const char *symbol, PTR out_sym = 0) {
+        assert(handle != 0);
+        auto sym = xdl_dsym(reinterpret_cast<void *>(handle), symbol, (ElfW(Sym) *)out_sym);
+        std::cout << "xdl_dsym -> " << sym << std::endl;
+    }
+
+    void _xdl_dsym(PTR handle, const char *symbol) {
+        _xdl_dsym(handle, symbol, 0);
+    }
+
 private:
-    static const char *XdlInfoToString(xdl_info_t *info) {
+    static const char *
+    XdlInfoToString(xdl_info_t *info) {
         type t = type::get<xdl_info_t>();
         std::stringstream os;
         for (auto &prop : t.get_properties()) {
@@ -96,11 +139,23 @@ private:
 void reg_xdl(lua_State *L) {
     luabridge::getGlobalNamespace(L)
         .beginClass<xdl_bind>("xdl_bind")
+        .addConstructor<void (*)()>()
         .addFunction("info", &xdl_bind::info)
         .addFunction("infoTostring", &xdl_bind::infoTostring)
         .addFunction("findSymbyName", &xdl_bind::findSymbyName)
         .addFunction("iterate_phdr", &xdl_bind::iterate_phdr)
         .addFunction("addressInfo", &xdl_bind::addressInfo)
+
+        .addFunction("xdl_open",
+                     luabridge::overload<const char *>(&xdl_bind::_xdl_open),
+                     luabridge::overload<const char *, int>(&xdl_bind::_xdl_open))
+        .addFunction("xdl_close", &xdl_bind::_xdl_close)
+        .addFunction("xdl_sym",
+                     luabridge::overload<PTR, const char *>(&xdl_bind::_xdl_sym),
+                     luabridge::overload<PTR, const char *, ElfW(Sym) *>(&xdl_bind::_xdl_sym))
+        .addFunction("xdl_dsym",
+                     luabridge::overload<PTR, const char *>(&xdl_bind::_xdl_dsym),
+                     luabridge::overload<PTR, const char *, PTR>(&xdl_bind::_xdl_dsym))
         .endClass();
     static auto xdl = new xdl_bind();
     luabridge::setGlobal(L, xdl, "xdl");

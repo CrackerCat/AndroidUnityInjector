@@ -42,5 +42,6 @@ void reg_unity(lua_State *L) {
     }
     static auto unity = new unity_bind();
     luabridge::setGlobal(L, unity, "unity");
-    DEBUG_PRINT("[*] luabridge bind unity\n");
+
+    fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] luabridge bind {}\n", "unity");
 }

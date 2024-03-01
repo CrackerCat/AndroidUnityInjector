@@ -99,8 +99,8 @@ void test_3(lua_State *L) {
         .beginClass<test_lua>("test_lua")
         .addConstructor<void (*)()>()
         .addFunction("test", &test_lua::test)
-        .addData("m_test_string", &test_lua::m_test_string)
-        .addData("m_test_int", &test_lua::m_test_int)
+        .addProperty("m_test_string", &test_lua::m_test_string)
+        .addProperty("m_test_int", &test_lua::m_test_int)
         .endClass();
 
     static auto test = new test_lua();
