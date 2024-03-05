@@ -1,9 +1,14 @@
-### UnityHook的缝合怪实现法（刚写还没法用，大致思路如下）
+### UnixInjector基本思路
 
-#### 目的：脱离frida，使用ptrace的方式注入一个lua虚拟机，并绑定 Unity Hook Cpp Impl
-（后面考虑还是使用JavaScript虚拟机）
+1. 将dobby，xdl，keystone，capstone 等库看成插件库，实现他们的lua绑定
+2. 通过注入的方式(ptrace / [/proc/mem](https://github.com/erfur/linjector-rs))的方式进行指定pid的注入
+3. socket通信实现injector于宿主机的通信
+4. 客户端的实现目前考虑使用python作为前端，辅以命令行补全库实现方便的函数调用
 
-##### Lua 绑定使用到 [LuaBridge](https://github.com/vinniefalco/LuaBridge) 
+#### 目的：脱离frida的使用，更加自由定制化的插件库使用
+（后面也可以考虑使用JavaScript虚拟机）
+
+##### Lua 绑定使用到 [LuaBridge](https://github.com/vinniefalco/LuaBridge)  / [LuaBridge3](https://github.com/kunitoki/LuaBridge3) 后者更香 [文档](https://kunitoki.github.io/LuaBridge3/Manual)
 
 ##### JavaScript虚拟机有很多备选
 1. [V8](https://chromium.googlesource.com/v8/v8.git) 还得是google优选
