@@ -14,5 +14,6 @@ static const char *TAG = "ZZZ";
 #include "spdlog/spdlog.h"
 
 extern std::shared_ptr<spdlog::logger> console;
+extern std::shared_ptr<spdlog::logger> android_logger;
 
 __attribute__((constructor)) void init_logger();
