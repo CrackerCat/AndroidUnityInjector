@@ -97,7 +97,8 @@
         "any": "cpp",
         "complex": "cpp",
         "typeindex": "cpp",
-        "__functional_base_03": "cpp"
+        "__functional_base_03": "cpp",
+        "__std_stream": "cpp"
     },
     "commentTranslate.targetLanguage": "zh-CN",
     "mesonbuild.configureOnOpen": false,

@@ -159,5 +159,5 @@ void reg_xdl(lua_State *L) {
         .endClass();
     static auto xdl = new xdl_bind();
     luabridge::setGlobal(L, xdl, "xdl");
-    fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] luabridge bind {}\n", "xdl");
+    console->info("[*] luabridge bind {}", "xdl");
 }

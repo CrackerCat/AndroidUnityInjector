@@ -163,48 +163,70 @@ static void repl(lua_State *L) {
 
 JNIEXPORT jint JNICALL
 JNI_OnLoad(JavaVM *vm, void *reserved) {
-    if (vm == nullptr)
-        return JNI_VERSION_1_6;
-    logd("------------------- JNI_OnLoad -------------------");
-    if (vm->GetEnv((void **)&env, JNI_VERSION_1_6) == JNI_OK) {
-        logd("[*] GetEnv OK | env:%p | vm:%p", env, vm);
-    }
-    if (vm->AttachCurrentThread(&env, nullptr) == JNI_OK) {
-        logd("[*] AttachCurrentThread OK");
-    }
-    g_jvm = vm;
-
-    g_thread = new std::thread([]() {
+    if (vm == nullptr && reserved == nullptr) {
+        // debug mode only start vm
         startLuaVM();
-    });
-    g_thread->detach();
+    } else {
+        logd("------------------- JNI_OnLoad -------------------");
+        if (vm->GetEnv((void **)&env, JNI_VERSION_1_6) == JNI_OK) {
+            logd("[*] GetEnv OK | env:%p | vm:%p", env, vm);
+        }
+        if (vm->AttachCurrentThread(&env, nullptr) == JNI_OK) {
+            logd("[*] AttachCurrentThread OK");
+        }
+        g_jvm = vm;
 
+        g_thread = new std::thread([]() {
+            startLuaVM();
+        });
+        g_thread->detach();
+    }
     return JNI_VERSION_1_6;
 }
 
-#include <setjmp.h>
-
-static jmp_buf recover;
-
-void segfault_handler(int signum) {
-    loge("[-] Caught signal %d\n", signum);
-    fmt::print(fg(fmt::color::sky_blue) | fmt::emphasis::bold, "Caught signal {}\n", signum);
-    signal(SIGSEGV, segfault_handler);
-    longjmp(recover, 1);
+inline void startRepl(lua_State *L) {
+#if DEBUG_LOCAL
+    repl(L);
+#else
+    repl_socket(L);
+#endif
 }
 
-void startLuaVM() {
-
+#include <setjmp.h>
+static jmp_buf recover;
+inline void reg_crash_handler() {
+    static sighandler_t segfault_handler = *[](int signum) {
+        loge("[-] Caught signal %d\n", signum);
+        console->error("Caught signal {}", signum);
+        signal(SIGSEGV, segfault_handler);
+        longjmp(recover, 1);
+    };
     signal(SIGSEGV, segfault_handler);
     setjmp(recover);
 
     if (setjmp(recover) == 0) {
         logd("[*] Lua VM started\n"); // android_logcat
-        fmt::print(fg(fmt::color::red) | fmt::emphasis::bold, "[*] Lua VM started\n");
+        console->info("Lua VM started");
     } else {
         loge("[-] Lua VM crashed and restart now\n");
-        fmt::print(fg(fmt::color::sky_blue) | fmt::emphasis::bold, "[*] Lua VM crashed and restart now\n");
+        console->error("Lua VM crashed and restart now");
     }
+}
+
+KittyMemoryMgr kittyMemMgr;
+inline void init_kittyMemMgr() {
+    if (!kittyMemMgr.initialize(getpid(), EK_MEM_OP_IO, true)) {
+        loge("KittyMemoryMgr initialize Error occurred )':");
+        console->info("KittyMemoryMgr initialize Error occurred )':");
+        return;
+    }
+}
+
+void startLuaVM() {
+
+    reg_crash_handler();
+
+    init_kittyMemMgr();
 
     lua_State *L = luaL_newstate();
 
@@ -212,11 +234,9 @@ void startLuaVM() {
 
     bind_libs(L);
 
+    startRepl(L);
+
     // test(L);
 
-    // repl(L);
-
-    repl_socket(L);
-
-    // lua_close(L);
+    lua_close(L);
 }

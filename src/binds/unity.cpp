@@ -37,11 +37,11 @@ void reg_unity(lua_State *L) {
         .endClass();
     void *handle_xdl = xdl_open("libil2cpp.so", RTLD_LAZY);
     if (handle_xdl == nullptr) {
-        DEBUG_PRINT("[*] luabridge bind unity failed\n");
+        console->error("[*] luabridge bind unity failed");
         return;
     }
     static auto unity = new unity_bind();
     luabridge::setGlobal(L, unity, "unity");
 
-    fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] luabridge bind {}\n", "unity");
+    console->info("[*] luabridge bind {}", "unity");
 }

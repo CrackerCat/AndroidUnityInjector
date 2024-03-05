@@ -5,36 +5,22 @@
 
 using namespace std;
 
-static string get_self_path() {
-    char buf[1024];
-    ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
-    if (len != -1) {
-        buf[len] = '\0';
-        return string(buf);
-    } else {
-        return "";
-    }
-}
+KittyInjector kitInjector;
+std::chrono::duration<double, std::milli> inj_ms{};
 
-#include "Injector/KittyInjector.hpp"
-#include "fmt/color.h"
-
-static KittyInjector kitInjector;
-static std::chrono::duration<double, std::milli> inj_ms{};
-
-constexpr bool ONLY_START_VM = false;
+constexpr bool ONLY_START_VM = DEBUG_LOCAL;
 
 int main(int argc, char *argv[]) {
 
     if (ONLY_START_VM) {
-        startLuaVM();
+        JNI_OnLoad(nullptr, nullptr);
         return 0;
     }
 
     // raise(SIGSTOP);
 
     if (argc != 2) {
-        fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "\nUsage: {} <pid|package_name>\n\n", argv[0]);
+        console->error("Usage: {} <pid|package_name>", argv[0]);
         return 1;
     }
 
@@ -58,11 +44,11 @@ int main(int argc, char *argv[]) {
 
     injected_info_t ret{};
     if (kitInjector.init(pid, EK_MEM_OP_IO)) {
-        fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] KittyInjector init\n");
+        console->info("KittyInjector init");
         if (kitInjector.attach()) {
-            fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] KittyInjector attach\n");
+            console->info("KittyInjector attach");
         } else {
-            fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] KittyInjector attach failed\n");
+            console->error("KittyInjector attach failed");
             return 0;
         }
         auto tm_start = std::chrono::high_resolution_clock::now();
@@ -70,7 +56,7 @@ int main(int argc, char *argv[]) {
         ret = kitInjector.injectLibrary(lib, RTLD_NOW | RTLD_LOCAL, use_memfd, hide_maps, hide_solist,
                                         [&pid, &stopped](injected_info_t &injected) {
                                             if (injected.is_valid() && stopped) {
-                                                fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] Continuing target process...\n");
+                                                console->info("[*] Continuing target process...");
                                                 kill(pid, SIGCONT);
                                                 stopped = false;
                                             }
@@ -78,7 +64,7 @@ int main(int argc, char *argv[]) {
 
         inj_ms = std::chrono::high_resolution_clock::now() - tm_start;
         if (inj_ms.count() > 0)
-            fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] Injection took {} MS.\n", inj_ms.count());
+            console->info("[*] Injection took {} MS.", inj_ms.count());
 
         kitInjector.detach();
     }

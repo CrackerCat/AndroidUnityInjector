@@ -68,6 +68,5 @@ void reg_UnityResolve(lua_State *L) {
 
     static auto unity = new UnityResolve();
     luabridge::setGlobal(L, unity, "UR");
-
-    fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] luabridge bind {}\n", "UnityResolve");
+    console->info("[*] luabridge bind {}", "UnityResolve");
 }

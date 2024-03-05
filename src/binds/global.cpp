@@ -12,5 +12,5 @@ void reg_global(lua_State *L) {
         .addFunction(
             "ls", *[]() { system("ls"); });
 
-    fmt::print(fg(fmt::color::steel_blue) | fmt::emphasis::italic, "[*] luabridge bind {}\n", "global");
+    console->info("[*] luabridge bind {}", "global");
 }
