@@ -22,20 +22,30 @@ class xdl_bind {
 public:
     xdl_bind() {}
 
-    const char *
-    infoTostring() {
+    void info() {
         auto handle = xdl_open(EXEC_NAME, RTLD_LAZY);
         if (handle == nullptr) {
             printf("xdl_open failed\n");
         }
-        xdl_info_t info;
-        xdl_info(handle, XDL_DI_DLINFO, &info);
-        xdl_close(handle);
-        return XdlInfoToString(&info);
+        parseInfo(handle);
     }
 
-    void info() {
-        printf("%s", infoTostring());
+    void info(PTR p) {
+        void *handle = reinterpret_cast<void *>(p);
+        if (handle == nullptr) {
+            printf("xdl_open failed\n");
+        }
+        parseInfo(handle);
+    }
+
+    void info(const char *lib) {
+        if (lib == "")
+            return info();
+        auto handle = xdl_open(lib, RTLD_LAZY);
+        if (handle == nullptr) {
+            printf("xdl_open failed\n");
+        }
+        parseInfo(handle);
     }
 
     void addressInfo(PTR p) {
@@ -114,8 +124,14 @@ public:
     }
 
 private:
-    static const char *
-    XdlInfoToString(xdl_info_t *info) {
+    static void parseInfo(void *handle) {
+        xdl_info_t info;
+        xdl_info(handle, XDL_DI_DLINFO, &info);
+        xdl_close(handle);
+        printf("%s", XdlInfoToString(&info));
+    }
+
+    static const char *XdlInfoToString(xdl_info_t *info) {
         type t = type::get<xdl_info_t>();
         std::stringstream os;
         for (auto &prop : t.get_properties()) {
@@ -140,12 +156,13 @@ void reg_xdl(lua_State *L) {
     luabridge::getGlobalNamespace(L)
         .beginClass<xdl_bind>("xdl_bind")
         .addConstructor<void (*)()>()
-        .addFunction("info", &xdl_bind::info)
-        .addFunction("infoTostring", &xdl_bind::infoTostring)
+        .addFunction("info",
+                     luabridge::overload<>(&xdl_bind::info),
+                     luabridge::overload<PTR>(&xdl_bind::info),
+                     luabridge::overload<const char *>(&xdl_bind::info))
         .addFunction("findSymbyName", &xdl_bind::findSymbyName)
         .addFunction("iterate_phdr", &xdl_bind::iterate_phdr)
         .addFunction("addressInfo", &xdl_bind::addressInfo)
-
         .addFunction("xdl_open",
                      luabridge::overload<const char *>(&xdl_bind::_xdl_open),
                      luabridge::overload<const char *, int>(&xdl_bind::_xdl_open))

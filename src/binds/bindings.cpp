@@ -9,8 +9,7 @@ void bind_libs(lua_State *L) {
     reg_unity(L);
 
     reg_UnityResolve(L);
+    reg_lief(L);
 
     alias(L);
-
-    //
 }
