@@ -11,5 +11,7 @@ void bind_libs(lua_State *L) {
     reg_UnityResolve(L);
     reg_lief(L);
 
+    reg_oai(L);
+
     alias(L);
 }

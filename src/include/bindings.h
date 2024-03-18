@@ -22,4 +22,6 @@ void reg_lief(lua_State *L);
 
 void alias(lua_State *L);
 
+void reg_oai(lua_State *L);
+
 #endif

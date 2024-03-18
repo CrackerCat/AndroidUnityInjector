@@ -14,3 +14,6 @@ target_link_libraries(${PROJECT_NAME} INTERFACE utils)
 
 add_subdirectory(dobby)
 target_link_libraries(${PROJECT_NAME} INTERFACE dobbyPack)
+
+add_subdirectory(chat)
+target_link_libraries(${PROJECT_NAME} INTERFACE liboaiPack)
