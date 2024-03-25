@@ -40,8 +40,9 @@ function DownloadGitHubReleaseFile {
     }
 }
 
-Push-Location "D:\git_project\AndroidUnityInjector\plugins\Utils\LIEF\"
 $workingDir = $PSScriptRoot
+
+Push-Location $workingDir
 
 $Platform = "Android"
 

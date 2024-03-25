@@ -67,6 +67,8 @@ setenforce 0
 
 ![xdl:info()](https://github.com/axhlzy/AndroidUnityInjector/blob/main/images/inject_nc_test.png)
 
+![asm](https://github.com/axhlzy/AndroidUnityInjector/blob/main/images/asm.png)
+
 这里参考代码中xdl的绑定
 
 ---

@@ -1,7 +1,0 @@
-{
-    "version": 4,
-    "include": [
-        "presets/CMakePresets_Arm32.json",
-        "presets/CMakePresets_Arm64.json"
-    ]
-}
