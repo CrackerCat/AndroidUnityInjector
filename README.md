@@ -1,4 +1,4 @@
-### UnixInjector基本思路
+### Injector基本思路
 
 1. 将dobby，xdl，keystone，capstone 等库看成插件库，实现他们的lua绑定
 2. 通过注入的方式(ptrace / [/proc/mem](https://github.com/erfur/linjector-rs))的方式进行指定pid的注入
