@@ -27,8 +27,8 @@
 ##### Inject的参考代码 (自己把自己注入到unity游戏中)
 1. [AndKittyInjector](https://github.com/MJx0/AndKittyInjector) 最完备的实现
 2. [AndroidPtraceInject](https://github.com/SsageParuders/AndroidPtraceInject) 注释非常清晰
-3. [TinyInjector](https://github.com/shunix/TinyInjector)
-4. 
+3. [TinyInjector](https://github.com/shunix/TinyInjector) ...
+4. [linjector-rs](https://github.com/erfur/linjector-rs) injection using /proc/mem
 
 ##### 与Lua虚拟机交互
 - 安卓本地端创建一个socket服务器，远端windows/linux使用python或者再编译一个命令行程序用来与安卓通信
