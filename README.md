@@ -31,8 +31,12 @@
 4. [linjector-rs](https://github.com/erfur/linjector-rs) injection using /proc/mem
 5. [NullTrace-Injector](https://github.com/0NullBit0/NullTrace-Injector)
 
+##### JDB CALL IMPL
+1. [jdwp-shellifier](https://github.com/IOActive/jdwp-shellifier)
+
 ##### 与Lua虚拟机交互
 - 安卓本地端创建一个socket服务器，远端windows/linux使用python或者再编译一个命令行程序用来与安卓通信
+1. [websocat](https://github.com/vi/websocat)
 
 ---
 
