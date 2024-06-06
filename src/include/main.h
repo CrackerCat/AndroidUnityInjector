@@ -37,7 +37,7 @@ extern KittyMemoryMgr kittyMemMgr;
 #endif
 
 // 测试的时候使用 （直接启动本地lua虚拟机同事使用测试代码及日志）
-#define DEBUG_LOCAL false
+#define DEBUG_LOCAL true
 
 // 兼容luabridge3对void*特化成 userdata 导致控制台不能直接输入数字视作void*的问题
 #ifndef PTR
@@ -59,6 +59,7 @@ JNIEXPORT jint JNICALL
 JNI_OnLoad(JavaVM *vm, void *reserved);
 
 __attribute__((visibility("default"))) void startLuaVM();
+__attribute__((visibility("default"))) void initVM();
 
 #ifdef __cplusplus
 }

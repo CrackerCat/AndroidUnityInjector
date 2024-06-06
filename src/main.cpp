@@ -9,8 +9,16 @@ KittyInjector kitInjector;
 std::chrono::duration<double, std::milli> inj_ms{};
 
 constexpr bool ONLY_START_VM = DEBUG_LOCAL;
-
 int main(int argc, char *argv[]) {
+
+    std::thread t([]() {
+        pthread_setname_np(pthread_self(), "dohook");
+        while (true) {
+            if (checkIl2cppLoaded())
+                return;
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    });
 
     if (ONLY_START_VM) {
         JNI_OnLoad(nullptr, nullptr);

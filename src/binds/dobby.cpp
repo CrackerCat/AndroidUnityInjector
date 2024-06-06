@@ -35,7 +35,7 @@ public:
             hookMap[address] = nullptr;
         }
         cur_list[++count_hook_index] = address;
-        static auto replace_call = (void *)*[](void *arg0, void *arg1, void *arg2, void *arg3) {
+        auto replace_call = (void *)*[](void *arg0, void *arg1, void *arg2, void *arg3) {
             printf("called nop \n\t[0] -> %p\n\t[1] -> %p\n\t[2] -> %p\n\t[3] -> %p \n", arg0, arg1, arg2, arg3);
         };
 

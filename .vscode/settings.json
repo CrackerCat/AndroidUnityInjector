@@ -100,7 +100,9 @@
         "__functional_base_03": "cpp",
         "__std_stream": "cpp",
         "csignal": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "lstate.h": "c",
+        "lgc.h": "c"
     },
     "commentTranslate.targetLanguage": "zh-CN",
     "mesonbuild.configureOnOpen": false,
