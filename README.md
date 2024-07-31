@@ -79,4 +79,13 @@ setenforce 0
 
 ---
 
+或者是这样考虑，不管用什么方式注入
+注入以后调用init函数创建一个socket用来操作后续启动方式 nc去测试，主要就是发送一个最基本的hello信息
+然后就是初始化后续的
+启动方式
+1. 在Android上运行lua引擎，并通过socket传输字符与主机通信
+2. 主机运行js引擎，提前约定好rpc常用的方法
+
+---
+
 然后想要实现的api大致同 [Il2CppHookScripts](https://github.com/axhlzy/Il2CppHookScripts) 这里面的常用api
